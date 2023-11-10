@@ -31,6 +31,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+    app_
 
 
 # Don't forget to define the `get_access_token` and `get_file_data` functions as
