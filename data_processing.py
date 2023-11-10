@@ -25,17 +25,12 @@ def clean(df):
     return df
 
 def df_pivot_table(df):
-    # Get the current year
-    current_year = datetime.now().year
-
-    # Filter the DataFrame for the current year
-    df_current_year = df[df['Month'].dt.to_timestamp().dt.year == current_year]
 
     # Pivot table to get total hours by month and category for the current year
-    pivot_table_current_year = df_current_year.pivot_table(values='Hours', index=['Month'], columns='Code', aggfunc='sum', fill_value=0)
+    pivot_table = df.pivot_table(values='Hours', index=['Month'], columns='Code', aggfunc='sum', fill_value=0)
 
     # Summing up all codes for each month to get a 'Total' column
-    pivot_table_current_year['Total'] = pivot_table_current_year.sum(axis=1)
+    pivot_table['Total'] = pivot_table.sum(axis=1)
 
-    return pivot_table_current_year
+    return pivot_table
 
