@@ -22,7 +22,7 @@ def interactive_area_chart(pivot_table):
     current_year = datetime.now().year
 
     # Creating an interactive area plot with Plotly
-    fig = px.area(pivot_table, x='Month', y='Total', title=f'{current_year} - Total Hours/Month')
+    fig = px.area(pivot_table, x='Month', y='Total', title=f'Current Year - {current_year} - Total Hours/Month')
     plot_div = plot(fig, output_type='div', include_plotlyjs=False)
     #fig.show()
 

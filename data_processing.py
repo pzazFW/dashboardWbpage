@@ -1,5 +1,6 @@
 import pandas as pd
 from datetime import datetime
+from flask import request
 
 # Clean the data
 def clean(df):
@@ -34,3 +35,31 @@ def df_pivot_table(df):
 
     return pivot_table
 
+
+def filter_timeframe(df, start_date, end_date):
+
+    try:
+        # Convert the dates to datetime objects
+        start_date = datetime.strptime(start_date, '%Y-%m-%d').strftime('%Y-%m-%d')
+    except:
+        # Use the oldest date from your data if start_date is not provided
+        if not start_date:
+            start_date = oldest_date = df['Date'].min().strftime('%Y-%m-%d')
+    try:
+        # Convert the dates to datetime objects
+        end_date = datetime.strptime(end_date, '%Y-%m-%d').strftime('%Y-%m-%d')
+    except:
+        # Use today's date if end_date is not provided
+        if not end_date:
+            end_date = datetime.today().strftime('%Y-%m-%d')
+
+
+    # Assuming 'df' is your main DataFrame and it's globally accessible
+    # Filter the dataframe
+    try:
+        filtered_df = df[(df['Date'].dt.to_timestamp() >= start_date) & (df['Date'].dt.to_timestamp() <= end_date)]
+    except:
+        filtered_df = df[(df['Date'] >= start_date) & (df['Date'] <= end_date)]
+
+
+    return filtered_df, start_date, end_date
