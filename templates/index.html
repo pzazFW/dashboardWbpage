@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TimeReporting Dashboard</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+        if ( window.history.replaceState ) {
+            window.history.replaceState( null, null, window.location.href );
+        }
+    </script>
+    <!-- You can add additional CSS here to style your page -->
+    <style>
+        #area-chart-container {
+            width: 100%;
+            height: 500px; /* Adjust as needed */
+        }
+        #pivot-table-container {
+            width: 100%;
+            height: 500px; /* Adjust as needed */
+            margin-top: 20px; /* Space between the charts */
+        }
+    
+    </style>
+</head>
+<body>
+    <h1>Time Reporting Dashboard</h1>
+
+    <!-- Render the Plotly Area Chart -->
+    <div id="area-chart-container">
+        {{ plot_div|safe }}
+    </div>
+    <!-- Add Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <form action="/" method="post" class="form-inline justify-content-center mt-4">
+        <div class="form-group mx-sm-3 mb-2">
+            <label for="start_date">Start Date:</label>
+            <input type="date" class="form-control" id="start_date" name="start_date" value="{{ start_date }}">
+        </div>
+        <div class="form-group mx-sm-3 mb-2">
+            <label for="end_date">End Date:</label>
+            <input type="date" class="form-control" id="end_date" name="end_date" value="{{ end_date }}">
+        </div>
+        <button type="submit" class="btn btn-primary mb-2">Update Dashboard</button>
+    </form>
+
+    <!-- Render the Plotly Pivot Table Figure -->
+    <div id="pivot-table-container">
+        {{ pivot_table_div|safe }}
+    </div>
+
+    <!-- You can add additional HTML here for more content or charts -->
+
+</body>
+</html>
