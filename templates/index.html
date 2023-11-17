@@ -1,7 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>TimeReporting Dashboard</title>
+    <title>Time Reporting Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        h1 {
+            text-align: left;
+            font-size: 100px; /* or larger if needed */
+            font-weight: 900; /* for bolder text */
+            color: #333; /* choose a color that fits your design */
+            margin-top: 20px;
+        }
+
+        /* Additional custom styles can go here */
+    </style>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script>
         if ( window.history.replaceState ) {
@@ -19,20 +36,48 @@
             height: 500px; /* Adjust as needed */
             margin-top: 20px; /* Space between the charts */
         }
-    
+
+        /* Styles for the Total Hours Tile */
+        #total-hours-container {
+            display: flex;
+            justify-content: flex-start; /* Align to the left */
+            margin-top: 20px;
+        }
+        .tile {
+            width: 300px;
+            height: 200px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        .tile:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        .content {
+            text-align: center;
+        }
+        .content h3 {
+            margin: 0;
+            color: #333;
+            font-size: 24px;
+        }
+        .content p {
+            color: #555;
+            font-size: 36px;
+            margin: 10px 0 0;
+        }
+
     </style>
 </head>
 <body>
     <h1>Time Reporting Dashboard</h1>
 
-    <!-- Render the Plotly Area Chart -->
-    <div id="area-chart-container">
-        {{ plot_div|safe }}
-    </div>
-    <!-- Add Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-
-    <form action="/" method="post" class="form-inline justify-content-center mt-4">
+    <form action="/" method="post" class="form-inline mt-4">
         <div class="form-group mx-sm-3 mb-2">
             <label for="start_date">Start Date:</label>
             <input type="date" class="form-control" id="start_date" name="start_date" value="{{ start_date }}">
@@ -41,12 +86,49 @@
             <label for="end_date">End Date:</label>
             <input type="date" class="form-control" id="end_date" name="end_date" value="{{ end_date }}">
         </div>
+
+        <!-- Multiple Select for project codes -->
+        <div class="form-group mx-sm-3 mb-2">
+            <label for="project_code">Project Codes:</label>
+            <select name="project_code" id="project_code" class="form-control" multiple>
+                {% for code in project_codes %}
+                <option value="{{ code }}" {% if code in selected_codes %} selected {% endif %}>{{ code }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
         <button type="submit" class="btn btn-primary mb-2">Update Dashboard</button>
+        
     </form>
 
-    <!-- Render the Plotly Pivot Table Figure -->
-    <div id="pivot-table-container">
-        {{ pivot_table_div|safe }}
+    <!-- Render the Plotly Area Chart -->
+    <div id="area-chart-container">
+        {{ plot_div|safe }}
+    </div>
+    <!-- Add Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+
+    <!-- Tile for Total Hours -->
+    <div id="total-hours-container">
+        <div class="tile">
+            <div class="content">
+                <h3>Total Hours Worked:</h3>
+                <p id="totalHours">{{ total_hours }}</p>
+            </div>
+        </div>
+    </div>
+    <!-- Tile for Displaying Selected Project Codes -->
+    <div id="selected-codes-container" class="mt-4">
+        <div class="tile">
+            <div class="content">
+                <h3>Projects:</h3>
+                <p id="selectedCodes">
+                    {% for code in selected_code %}
+                    <span class="badge badge-secondary">{{ code }}</span>
+                    {% endfor %}
+                </p>
+            </div>
     </div>
 
     <!-- You can add additional HTML here for more content or charts -->

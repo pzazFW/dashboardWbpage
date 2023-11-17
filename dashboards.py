@@ -12,7 +12,7 @@ def interactive_area_chart(pivot_table):
     
     pio.renderers.default = 'notebook'
 
-    # Resetting index to use 'Month' as a column
+    # Resetting index to use 'Month' as a column    
     pivot_table.reset_index(inplace=True)
 
     # Change Month to string format (assuming 'Month' is now a regular column containing datetime objects)
@@ -22,7 +22,7 @@ def interactive_area_chart(pivot_table):
     current_year = datetime.now().year
 
     # Creating an interactive area plot with Plotly
-    fig = px.area(pivot_table, x='Month', y='Total', title=f'Current Year - {current_year} - Total Hours/Month')
+    fig = px.area(pivot_table, x='Month', y='Total')
     plot_div = plot(fig, output_type='div', include_plotlyjs=False)
     #fig.show()
 

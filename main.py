@@ -29,21 +29,22 @@ def main():
     df = get_file_data(sheet_name, access_token, site_id, item_id)
     print("Successfully retrieved file data.")
 
-    #Preprocess and clean data
+    # Preprocess and clean data
     df = clean(df)
+
+    # Get project codes 
+    project_codes = df['Code'].unique().tolist()
+
+    # Set code to None
+    selected_code = []
     
+    """
     # Get the current year
     current_year = datetime.now().year
 
     # Filter the DataFrame for the current year
     df_current_year = df[df['Month'].dt.to_timestamp().dt.year == current_year]
-
-    # Make pivot table for current year
-    pivot_table_current_year = df_pivot_table(df_current_year)
-
-    # Create area chart
-    area_chart_div = interactive_area_chart(pivot_table_current_year)
-
+    """
 
     if request.method == 'POST':
         
@@ -53,11 +54,25 @@ def main():
         # Filtered timeframe
         df, start_date, end_date = filter_timeframe(df, start_date, end_date)
         
+        # Handle project code selection
+        selected_code = request.form.get('project_code')
+        if selected_code:
+            df = df[df['Code'] == selected_code]
     else:
         print("No filter used")
         start_date = None
         end_date = None
 
+    # Make pivot table
+    pivot_table = df_pivot_table(df)
+
+    # Create area charts
+    area_chart_div = interactive_area_chart(pivot_table)
+
+    # Get total hours
+    total_hours = df['Hours'].sum()
+
+    """
     # Make pivot table for all data
     pivot_table = df_pivot_table(df)
 
@@ -65,9 +80,10 @@ def main():
     pivot_table_fig = create_pivot_table_figure(pivot_table)
     pivot_table_div = plot(pivot_table_fig, output_type='div', include_plotlyjs=False)
 
-    return render_template('index.html', plot_div=area_chart_div, pivot_table_div=pivot_table_div, start_date = start_date, end_date = end_date)
+    """
+    #return render_template('index.html', plot_div=area_chart_div, pivot_table_div=pivot_table_div, start_date = start_date, end_date = end_date)
 
-
+    return render_template('index.html', total_hours = total_hours, plot_div=area_chart_div,  project_codes=project_codes, selected_code=selected_code, start_date = start_date, end_date = end_date)    
 
 if __name__ == "__main__":
     app.run(debug=True)
