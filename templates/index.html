@@ -44,43 +44,70 @@
             justify-content: flex-start; /* Align to the left */
             margin-top: 20px;
         }
+
         .tiles-container {
             display: flex;
-            justify-content: space-around;
             flex-wrap: wrap;
+            align-items: flex-start; /* Align tiles to the top */
+            margin-left: 0; /* Align container to the left */
         }
+
         .tile {
-            flex: 1;
             margin: 10px;
-            min-width: 300px;
-            width: 300px;
-            height: 200px;
+            width: 300px; /* Fixed width for each tile */
+            min-height: 200px; /* Minimum height for each tile */
             background-color: #fff;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             border-radius: 10px;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: all 0.3s ease;
-        }
-        .tile:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-        }
-        .content {
-            text-align: center;
-        }
-        .content h3 {
-            margin: 0;
-            color: #333;
-            font-size: 24px;
-        }
-        .content p {
-            color: #555;
-            font-size: 36px;
-            margin: 10px 0 0;
+            flex-direction: column; /* Stack children vertically */
+            justify-content: start; /* Align content to the start */
+            padding: 20px;
+            box-sizing: border-box;
+            overflow: hidden; /* Prevent content from overflowing */
+         }
+
+        .tile .content {
+            display: flex;
+            flex-direction: column; /* Stack children vertically */
+            align-items: flex-start; /* Align children to the left */
+            width: 100%; /* Ensure the content fills the tile horizontally */
         }
 
+        .tile .content h3 {
+            font-size: 1.5rem; /* Use responsive font size */
+            color: #333;
+            margin: 0 0 10px 0; /* Space below the h3 element */
+        }
+
+        .tile .content p,
+        .tile .content .badge {
+            font-size: 1rem; /* Use responsive font size */
+            color: rgb(64, 57, 57);
+            margin: 0 0 10px 0; /* Space below the paragraph/badge */
+            white-space: normal; /* Allow wrapping for badges */
+            overflow: hidden; /* Hide overflow for paragraphs */
+            text-overflow: ellipsis; /* Add ellipsis to overflowing text for paragraphs */
+        }
+
+        /* Specific style for badges to ensure they wrap and don't overflow */
+        .tile .content .badge {
+            overflow: visible; /* Show overflow for badges */
+            text-overflow: clip; /* Remove ellipsis for badges */
+        }
+
+        /* Create a new container for both charts */
+        .charts-container {
+            display: flex;
+            flex-direction: row; /* Display charts horizontally */
+            margin-top: 20px;
+        }
+
+        /* Adjust the width and height of each chart */
+        #area-chart-container, #bar-chart-container {
+            width: 50%; /* Each chart takes up 50% of the container width */
+            height: 500px; /* Adjust as needed */
+        }
     </style>
 </head>
 <body>
@@ -118,15 +145,6 @@
             });
         </script>
     </form>
-
-    <!-- Render the Plotly Area Chart -->
-    <div id="area-chart-container">
-        {{ plot_div|safe }}
-    </div>
-    <!-- Add Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-
-
    <!-- Tiles Container for both Total Hours and Selected Project Codes -->
     <div class="tiles-container">
         <!-- Tile for Total Hours -->
@@ -147,6 +165,17 @@
                     {% endfor %}
                 </p>
             </div>
+        </div>
+    </div>
+    <div class="charts-container">
+        <!-- Render the Plotly Area Chart -->
+        <div id="area-chart-container">
+            {{ plot_div|safe }}
+        </div>
+
+        <!-- Render the Bar Chart -->
+        <div id="bar-chart-container">
+            {{ bar_chart_div|safe }}
         </div>
     </div>
 

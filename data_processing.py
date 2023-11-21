@@ -10,6 +10,9 @@ def clean(df):
     #remove first row from DataFrame
     df = df[1:]
 
+    # Remove rows where the 'Project' column contains 'Internal'
+    df = df[df['Code'] != 'Internal']
+
     # Change data types
     df['Date'] = pd.to_datetime(df['Date'])
     try:

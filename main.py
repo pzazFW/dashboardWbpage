@@ -2,7 +2,7 @@ from get_access_token import get_access_token
 from get_file_data import get_file_data
 from data_processing import clean, filter_timeframe, df_pivot_table
 from flask import Flask, render_template, request, redirect, url_for
-from dashboards import interactive_area_chart
+from dashboards import interactive_area_chart, bar_chart
 from datetime import datetime, timedelta
 from dashboards import create_pivot_table_figure
 from plotly.offline import plot
@@ -36,7 +36,7 @@ def main():
     # Preprocess and clean data
     df = clean(df)
     df_original = df
-    
+
     # Get project codes 
     project_codes = df['Code'].unique().tolist()
 
@@ -97,6 +97,9 @@ def main():
     # Get total hours
     total_hours = df['Hours'].sum()
 
+    # Create a bar chart
+    bar_chart_div = bar_chart(pivot_table)
+
     try:
         # Format dates as strings in "YYYY-MM-DD" format if they are not None
         start_date = start_date.strftime('%Y-%m-%d') if start_date else None
@@ -104,7 +107,7 @@ def main():
     except:
         print("Already formatted")
 
-    return render_template('index.html', total_hours = total_hours, plot_div=area_chart_div,  project_codes=project_codes, selected_code=selected_code, start_date = start_date, end_date = end_date)    
+    return render_template('index.html', total_hours = total_hours, plot_div=area_chart_div, bar_chart_div=bar_chart_div,  project_codes=project_codes, selected_code=selected_code, start_date = start_date, end_date = end_date)    
 
 if __name__ == "__main__":
     app.run(debug=True)
