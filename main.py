@@ -35,16 +35,9 @@ def main():
     # Get project codes 
     project_codes = df['Code'].unique().tolist()
 
-    # Set code to None
-    selected_code = []
+    # Initialize selected_code with all project codes by default
+    selected_code = project_codes.copy()
     
-    """
-    # Get the current year
-    current_year = datetime.now().year
-
-    # Filter the DataFrame for the current year
-    df_current_year = df[df['Month'].dt.to_timestamp().dt.year == current_year]
-    """
 
     if request.method == 'POST':
         
@@ -55,9 +48,10 @@ def main():
         df, start_date, end_date = filter_timeframe(df, start_date, end_date)
         
         # Handle project code selection
-        selected_code = request.form.get('project_code')
-        if selected_code:
-            df = df[df['Code'] == selected_code]
+        selected_post_codes = request.form.getlist('project_code')
+        if selected_post_codes:
+            selected_code = selected_post_codes
+            df = df[df['Code'].isin(selected_code)]
     else:
         print("No filter used")
         start_date = None
@@ -71,17 +65,6 @@ def main():
 
     # Get total hours
     total_hours = df['Hours'].sum()
-
-    """
-    # Make pivot table for all data
-    pivot_table = df_pivot_table(df)
-
-    # Create pivot table chart
-    pivot_table_fig = create_pivot_table_figure(pivot_table)
-    pivot_table_div = plot(pivot_table_fig, output_type='div', include_plotlyjs=False)
-
-    """
-    #return render_template('index.html', plot_div=area_chart_div, pivot_table_div=pivot_table_div, start_date = start_date, end_date = end_date)
 
     return render_template('index.html', total_hours = total_hours, plot_div=area_chart_div,  project_codes=project_codes, selected_code=selected_code, start_date = start_date, end_date = end_date)    
 

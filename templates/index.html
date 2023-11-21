@@ -4,6 +4,7 @@
     <title>Time Reporting Dashboard</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -43,7 +44,15 @@
             justify-content: flex-start; /* Align to the left */
             margin-top: 20px;
         }
+        .tiles-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
         .tile {
+            flex: 1;
+            margin: 10px;
+            min-width: 300px;
             width: 300px;
             height: 200px;
             background-color: #fff;
@@ -98,7 +107,15 @@
         </div>
 
         <button type="submit" class="btn btn-primary mb-2">Update Dashboard</button>
-        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <!-- Include Select2 JS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+        <!-- Select2 Initialization Script -->
+        <script>
+            $(document).ready(function() {
+                $('#project_code').select2();
+            });
+        </script>
     </form>
 
     <!-- Render the Plotly Area Chart -->
@@ -109,17 +126,17 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 
 
-    <!-- Tile for Total Hours -->
-    <div id="total-hours-container">
+   <!-- Tiles Container for both Total Hours and Selected Project Codes -->
+    <div class="tiles-container">
+        <!-- Tile for Total Hours -->
         <div class="tile">
             <div class="content">
-                <h3>Total Hours Worked:</h3>
+                <h3>Total Hours Worked:</h3> 
                 <p id="totalHours">{{ total_hours }}</p>
             </div>
         </div>
-    </div>
-    <!-- Tile for Displaying Selected Project Codes -->
-    <div id="selected-codes-container" class="mt-4">
+
+        <!-- Tile for Displaying Selected Project Codes -->
         <div class="tile">
             <div class="content">
                 <h3>Projects:</h3>
@@ -129,6 +146,7 @@
                     {% endfor %}
                 </p>
             </div>
+        </div>
     </div>
 
     <!-- You can add additional HTML here for more content or charts -->
