@@ -85,7 +85,6 @@
 </head>
 <body>
     <h1>Time Reporting Dashboard</h1>
-
     <form action="/" method="post" class="form-inline mt-4">
         <div class="form-group mx-sm-3 mb-2">
             <label for="start_date">Start Date:</label>
@@ -105,8 +104,10 @@
                 {% endfor %}
             </select>
         </div>
-
-        <button type="submit" class="btn btn-primary mb-2">Update Dashboard</button>
+        <button type="submit" name="this_month" class="btn btn-info mb-2 mr-2">This Month</button>
+        <button type="submit" name="this_year" class="btn btn-info mb-2 mr-2">This Year</button>
+        <button type="submit" name="clear" value="clear" class="btn btn-secondary mb-2 mr-2">Clear</button>
+        <button type="submit" class="btn btn-primary mb-2 mr-2">Update Dashboard</button>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <!-- Include Select2 JS -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
