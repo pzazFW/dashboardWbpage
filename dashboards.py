@@ -12,7 +12,7 @@ def interactive_area_chart(pivot_table):
     
     pio.renderers.default = 'notebook'
 
-    # Resetting index to use 'Month' as a column
+    # Resetting index to use 'Month' as a column    
     pivot_table.reset_index(inplace=True)
 
     # Change Month to string format (assuming 'Month' is now a regular column containing datetime objects)
@@ -22,7 +22,7 @@ def interactive_area_chart(pivot_table):
     current_year = datetime.now().year
 
     # Creating an interactive area plot with Plotly
-    fig = px.area(pivot_table, x='Month', y='Total', title=f'Current Year - {current_year} - Total Hours/Month')
+    fig = px.area(pivot_table, x='Month', y='Total')
     plot_div = plot(fig, output_type='div', include_plotlyjs=False)
     #fig.show()
 
@@ -45,3 +45,24 @@ def create_pivot_table_figure(pivot_table):
     # figure.update_layout(...)
 
     return figure
+
+def bar_chart(df):
+
+    # Extract the project columns dynamically between 'Month' and 'Total'
+    project_columns = df.columns[df.columns.get_loc('Month')+1:df.columns.get_loc('Total')]
+
+    # Create a DataFrame with project parts and their total hours
+    project_total_hours = df[project_columns].sum() 
+
+    # Create a Plotly bar chart
+    fig = go.Figure()
+    fig.add_trace(go.Bar(x=project_total_hours.index, y=project_total_hours.values))
+
+    # Add labels to the x-axis and y-axis
+    fig.update_xaxes(title_text='Projects')
+    fig.update_yaxes(title_text='Hours')
+
+    # Convert the Plotly figure to HTML div
+    bar_chart_div = fig.to_html(full_html=False)
+
+    return bar_chart_div

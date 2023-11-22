@@ -1,7 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>TimeReporting Dashboard</title>
+    <title>Time Reporting Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        h1 {
+            text-align: left;
+            font-size: 80px; /* or larger if needed */
+            font-weight: 900; /* for bolder text */
+            color: #333; /* choose a color that fits your design */
+            margin-top: 20px;
+        }
+
+        /* Additional custom styles can go here */
+    </style>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script>
         if ( window.history.replaceState ) {
@@ -19,20 +37,83 @@
             height: 500px; /* Adjust as needed */
             margin-top: 20px; /* Space between the charts */
         }
-    
+
+        /* Styles for the Total Hours Tile */
+        #total-hours-container {
+            display: flex;
+            justify-content: flex-start; /* Align to the left */
+            margin-top: 20px;
+        }
+
+        .tiles-container {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start; /* Align tiles to the top */
+            margin-left: 0; /* Align container to the left */
+        }
+
+        .tile {
+            margin: 10px;
+            width: 300px; /* Fixed width for each tile */
+            min-height: 200px; /* Minimum height for each tile */
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column; /* Stack children vertically */
+            justify-content: start; /* Align content to the start */
+            padding: 20px;
+            box-sizing: border-box;
+            overflow: hidden; /* Prevent content from overflowing */
+         }
+
+        .tile .content {
+            display: flex;
+            flex-direction: column; /* Stack children vertically */
+            align-items: flex-start; /* Align children to the left */
+            width: 100%; /* Ensure the content fills the tile horizontally */
+        }
+
+        .tile .content h3 {
+            font-size: 1.5rem; /* Use responsive font size */
+            color: #333;
+            margin: 0 0 10px 0; /* Space below the h3 element */
+        }
+
+        .tile .content p,
+        .tile .content .badge {
+            font-size: 1rem; /* Use responsive font size */
+            color: rgb(64, 57, 57);
+            margin: 0 0 10px 0; /* Space below the paragraph/badge */
+            white-space: normal; /* Allow wrapping for badges */
+            overflow: hidden; /* Hide overflow for paragraphs */
+            text-overflow: ellipsis; /* Add ellipsis to overflowing text for paragraphs */
+        }
+
+        /* Specific style for badges to ensure they wrap and don't overflow */
+        .tile .content .badge {
+            overflow: visible; /* Show overflow for badges */
+            text-overflow: clip; /* Remove ellipsis for badges */
+        }
+
+        /* Create a new container for both charts */
+        .charts-container {
+            display: flex;
+            flex-direction: row; /* Display charts horizontally */
+            margin-top: 20px;
+        }
+
+        /* Adjust the width and height of each chart */
+        #area-chart-container, #bar-chart-container {
+            width: 50%; /* Each chart takes up 50% of the container width */
+            height: 500px; /* Adjust as needed */
+        }
     </style>
+    
 </head>
 <body>
     <h1>Time Reporting Dashboard</h1>
-
-    <!-- Render the Plotly Area Chart -->
-    <div id="area-chart-container">
-        {{ plot_div|safe }}
-    </div>
-    <!-- Add Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-
-    <form action="/" method="post" class="form-inline justify-content-center mt-4">
+    <form action="/" method="post" class="form-inline mt-4">
         <div class="form-group mx-sm-3 mb-2">
             <label for="start_date">Start Date:</label>
             <input type="date" class="form-control" id="start_date" name="start_date" value="{{ start_date }}">
@@ -41,15 +122,62 @@
             <label for="end_date">End Date:</label>
             <input type="date" class="form-control" id="end_date" name="end_date" value="{{ end_date }}">
         </div>
-        <button type="submit" class="btn btn-primary mb-2">Update Dashboard</button>
+
+        <!-- Multiple Select for project codes -->
+        <div class="form-group mx-sm-3 mb-2">
+            <label for="project_code">Project Codes:</label>
+            <select name="project_code" id="project_code" class="form-control" multiple>
+                {% for code in project_codes %}
+                <option value="{{ code }}" {% if code in selected_codes %} selected {% endif %}>{{ code }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" name="this_month" class="btn btn-info mb-2 mr-2">This Month</button>
+        <button type="submit" name="this_year" class="btn btn-info mb-2 mr-2">This Year</button>
+        <button type="submit" name="clear" value="clear" class="btn btn-secondary mb-2 mr-2">Clear</button>
+        <button type="submit" class="btn btn-primary mb-2 mr-2">Update Dashboard</button>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <!-- Include Select2 JS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+        <!-- Select2 Initialization Script -->
+        <script>
+            $(document).ready(function() {
+                $('#project_code').select2();
+            });
+        </script>
     </form>
+   <!-- Tiles Container for both Total Hours and Selected Project Codes -->
+    <div class="tiles-container">
+        <!-- Tile for Total Hours -->
+        <div class="tile">
+            <div class="content">
+                <h3>Total Hours Worked:</h3> 
+                <p id="totalHours">{{ total_hours }}</p>
+            </div>
+        </div>
 
-    <!-- Render the Plotly Pivot Table Figure -->
-    <div id="pivot-table-container">
-        {{ pivot_table_div|safe }}
+        <!-- Tile for Displaying Selected Project Codes -->
+        <div class="tile">
+            <div class="content">
+                <h3>Projects:</h3>
+                <p id="selectedCodes">
+                    {% for code in selected_code %}
+                    <span class="badge badge-secondary">{{ code }}</span>
+                    {% endfor %}
+                </p>
+            </div>
+        </div>
     </div>
+    <div class="charts-container">
+        <!-- Render the Plotly Area Chart -->
+        <div id="area-chart-container">
+            {{ plot_div|safe }}
+        </div>
 
-    <!-- You can add additional HTML here for more content or charts -->
-
+        <!-- Render the Bar Chart -->
+        <div id="bar-chart-container">
+            {{ bar_chart_div|safe }}
+        </div>
+    </div>
 </body>
 </html>
