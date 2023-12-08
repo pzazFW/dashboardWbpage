@@ -8,6 +8,8 @@ from plotly.offline import plot
 from flask import Flask, render_template
 import plotly.graph_objects as go
 
+
+
 def interactive_area_chart(pivot_table):
     
     pio.renderers.default = 'notebook'
@@ -66,3 +68,20 @@ def bar_chart(df):
     bar_chart_div = fig.to_html(full_html=False)
 
     return bar_chart_div
+
+def table_div(df):
+
+    # Sort the DataFrame by the 'Date' column in descending order
+    df = df.sort_values(by='Date', ascending=False)
+    
+    fig = go.Figure(data=[go.Table(
+        header=dict(values=['Code','Date','Description'],
+                    fill_color='paleturquoise',
+                    align='left'),
+        cells=dict(values=[df.Code, df.Date.dt.strftime("%Y-%m-%d"), df.Description],
+                fill_color='lavender',
+                align='left'))
+    ])
+    table_div = fig.to_html(full_html=False)
+
+    return table_div
